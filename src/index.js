@@ -72,7 +72,7 @@ function loadSingleScript(uri, callbackFunc) {
     uri = uri.replace('https://', 'http://');
   }
 
-  tag = document.createElement('script');
+  tag = this.doc.createElement('script');
   tag.type = 'text/javascript';
   tag.src = uri;
   if (callbackFunc) {
@@ -80,7 +80,7 @@ function loadSingleScript(uri, callbackFunc) {
     tag.onreadystatechange = maybeDone;
   }
 
-  document.body.appendChild(tag);
+  this.doc.body.appendChild(tag);
 };
 
 export default class Wu {
@@ -170,7 +170,7 @@ export default class Wu {
     this.each(['', 'data-'], (v, k) => {
       this.each(attrs || [], (v2, k2) => {
         let attr = this.getAttribute(dom, v + k2);
-        
+
         if (attr) {
           rst[k2] = attr;
         }
@@ -363,7 +363,7 @@ export default class Wu {
   } // loadScripts
 
   loadIframe(parentEl, html) {
-    let iframe = document.createElement('iframe');
+    let iframe = this.doc.createElement('iframe');
 
     parentEl[0].appendChild(iframe);
 
@@ -372,11 +372,8 @@ export default class Wu {
       iframe.contentWindow.contents = html;
       iframe.src = 'javascript:window["contents"]';
     } else {
-      let doc = iframe.document;
+      let doc = iframe.contentDocument || iframe.document;
 
-      if (iframe.contentDocument) {
-        doc = iframe.contentDocument;
-      }
       doc.open();
       doc.write(html);
       doc.close();
