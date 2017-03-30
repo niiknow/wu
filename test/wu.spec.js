@@ -1,7 +1,7 @@
 /*global describe, it, before */
 
 import chai from 'chai';
-import Library from '../lib/wu.js';
+import Wu from '../lib/Wu.js';
 
 chai.expect();
 
@@ -9,7 +9,7 @@ const expect = chai.expect;
 
 let lib;
 
-describe('Given an instance of my wu',  () => {
+describe('Given an instance of my Wu',  () => {
   before(() => {
     lib = new Wu();
   });

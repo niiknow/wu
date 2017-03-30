@@ -1,8 +1,8 @@
 {
   "name": "wu",
-  "version": "0.2.2",
+  "version": "0.1.0",
   "description": "web utils",
-  "main": "lib/library.js",
+  "main": "lib/Wu.js",
   "scripts": {
     "build": "webpack --env build",
     "dev": "webpack --progress --colors --watch --env dev",
@@ -36,7 +36,7 @@
     "umd",
     "commonjs"
   ],
-  "author": "Krasimir Tsonev",
+  "author": "Tom Noogen",
   "license": "MIT",
   "bugs": {
     "url": "https://github.comn/niiknow/wu/issues"

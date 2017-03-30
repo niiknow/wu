@@ -44,7 +44,8 @@ const config = {
     modules: [path.resolve('./src')],
     extensions: ['.json', '.js']
   },
-  plugins: plugins
+  plugins: plugins,
+  target: 'web'
 };
 
 module.exports = config;

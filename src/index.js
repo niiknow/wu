@@ -1,8 +1,4 @@
-// Baseline setup
-// --------------
-
-// since this is for the browser, window is the root
-const root = window;
+var myRoot = {navigator: {userAgent: ''}, location: {protocol: 'file'}};
 
 // Establish the object that gets returned to break out of a loop iteration.
 const breaker = {};
@@ -23,7 +19,15 @@ const nativeForEach = ArrayProto.forEach,
   nativeIndexOf = ArrayProto.indexOf,
   nativeKeys = Object.keys;
 
-const userAgent = root.navigator.userAgent;
+function isNull(obj, defaultValue) {
+  return (typeof (obj) === 'undefined' || obj === null) ? defaultValue : obj;
+}
+
+const userAgent = myRoot.navigator.userAgent;
+
+if (typeof (window) !== 'undefined') {
+  myRoot = window;
+}
 
 function detectIe() {
   const ua = userAgent;
@@ -64,7 +68,7 @@ function loadSingleScript(uri, callbackFunc) {
   }
 
   // Prefix protocol
-  if ((root.location || {}).protocol === 'file') {
+  if ((myRoot.location || {}).protocol === 'file') {
     uri = uri.replace('https://', 'http://');
   }
 
@@ -89,6 +93,7 @@ export default class Wu {
       isIOS: /iP(hone|od|ad)/gi.test(userAgent)
     };
 
+    this.isNull = isNull;
     this.forEach = this.each;
     this.collect = this.map;
     this.any = this.some;
@@ -174,10 +179,6 @@ export default class Wu {
 
   has(obj, key) {
     return hasOwnProperty.call(obj, key);
-  }
-
-  isNull(obj, defaultValue) {
-    return (typeof (obj) === 'undefined' || obj === null) ? defaultValue : obj;
   }
 
   keys(obj) {
