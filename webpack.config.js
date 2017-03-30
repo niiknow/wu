@@ -16,6 +16,13 @@ if (env === 'build') {
   outputFile = libraryName + '.js';
 }
 
+/*
+plugins.push( new webpack.ProvidePlugin({
+    '$global': ''
+  })
+);
+*/
+
 const config = {
   entry: __dirname + '/src/index.js',
   devtool: 'source-map',
@@ -43,6 +50,10 @@ const config = {
   resolve: {
     modules: [path.resolve('./src')],
     extensions: ['.json', '.js']
+/*    alias: {
+      '$inc': path.resolve(__dirname, './lib/index.js')
+    }
+*/
   },
   plugins: plugins,
   target: 'web'
