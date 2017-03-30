@@ -4,10 +4,18 @@ const webpack = require('webpack');
 const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 const path = require('path');
 const env  = require('yargs').argv.env; // use --env with webpack 2
+const pkg = require('./package.json');
 
 let libraryName = 'Wu';
-
 let plugins = [], outputFile;
+
+let banner = [
+  ` ${pkg.name}.js - v${pkg.version}`,
+  ` build: ${new Date()}`,
+  ` ${pkg.description}`
+].join('\n');
+
+plugins.push( new webpack.BannerPlugin(banner) );
 
 if (env === 'build') {
   plugins.push(new UglifyJsPlugin({ minimize: true }));
@@ -15,6 +23,7 @@ if (env === 'build') {
 } else {
   outputFile = libraryName + '.js';
 }
+
 
 /*
 plugins.push( new webpack.ProvidePlugin({
