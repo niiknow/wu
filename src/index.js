@@ -184,19 +184,19 @@ export default class Wu {
    * sort with nearest geopoint, expect object with two properties: Latitude and Longitude
    * @param  {array}  points     
    * @param  {object} origin point 
-   * @return {array}           
+   * @return {object}           
    */
   geoOrderByOrigin(points, origin) {
-    let result = [];
+    let result = { origin: origin, results: [] };
 
     this.each(points, (point) => {
       let d = this.distance(origin.Latitude, origin.Longitude, point.Latitude, point.Longitude, { unit: 'mile' });
       let newPoint = { point: point, distance: parseFloat(this.isNull(d, 0)).toFixed(2) };
 
-      result.push(newPoint);
+      result.results.push(newPoint);
     });
 
-    this.sortOn(result, 'distance');
+    this.sortOn(result.results, 'distance');
     return result;
   }
 
@@ -205,21 +205,20 @@ export default class Wu {
    * @param  {array}    points     
    * @params {string}   jsonpUrl  the jsonp url without any query string
    * @param  {function} callback    the closure function on result
-   * @return {array}           
    */
   geoOrderByIP(points, jsonpUrl, callback) {
     let that = this;
 
     this.geoByIP(jsonpUrl, (rst) => {
-      let results = [];
+      let data = { origin: rst, results: [] };
 
       if (rst.latitude) {
         rst.Latitude = rst.latitude;
         rst.Longitude = rst.longitude;
-        results = that.geoOrderByOrigin(points, rst);
+        data = that.geoOrderByOrigin(points, rst);
       }
 
-      callback(results);
+      callback(data);
     });
   }
 
