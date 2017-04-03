@@ -100,6 +100,8 @@ export default class Wu {
     this.forEach = this.each;
     this.collect = this.map;
     this.any = this.some;
+    this.getAttribute = this.getAttr;
+    this.setAttribute = this.setAttr;
   }
   
   get name() {
@@ -117,7 +119,7 @@ export default class Wu {
       obj.addEventListener(evtName, func, false);
     } else if (obj.attachEvent) {
       obj.attachEvent(evtName, func);
-    } else if (this.getAttribute('on' + evtName)) {
+    } else if (this.getAttr(obj, 'on' + evtName)) {
       obj['on' + evtName] = func;
     } else {
       obj[evtName] = func;
@@ -136,12 +138,66 @@ export default class Wu {
       obj.removeEventListener(evtName, func, false);
     } else if (obj.detachEvent) {
       obj.detachEvent(evtName, func);
-    } else if (this.getAttribute('on' + evtName)) {
+    } else if (this.getAttr(obj, 'on' + evtName)) {
       obj['on' + evtName] = null;
     } else {
       obj[evtName] = null;
     }
     return this;
+  }
+  
+  /**
+   * get distance between two points
+   * @param  {number} latitude1  
+   * @param  {number} longitude1 
+   * @param  {number} latitude2  
+   * @param  {number} longitude2 
+   * @param  {object} options    
+   * @return {number}            
+   */
+  geoDistance(latitude1, longitude1, latitude2, longitude2, options) {
+    options = options || {};
+
+    function toRad(num) {
+      return num * Math.PI / 180;
+    }
+
+    let start = { latitude: latitude1, longitude: longitude1 };
+    let end = { latitude: latitude2, longitude: longitude2 };
+    let radii = { km: 6371, mile: 3960, meter: 6371000, nmi: 3440};
+    let R = options.unit in radii ? radii[options.unit] : radii.km;
+    let dLat = toRad(end.latitude - start.latitude);
+    let dLon = toRad(end.longitude - start.longitude);
+    let lat1 = toRad(start.latitude);
+    let lat2 = toRad(end.latitude) ;
+    let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    if (options.threshold) {
+      return options.threshold > (R * c);
+    }
+
+    return R * c;
+  }
+
+  /**
+   * sort with nearest geopoint, expect object with two properties: Latitude and Longitude
+   * @param  {object} origin point 
+   * @param  {array}  points     
+   * @return {array}           
+   */
+  geoOrderByOrigin(origin, points) {
+    let result = [];
+
+    this.each(points, (point) => {
+      let d = this.distance(origin.Latitude, origin.Longitude, point.Latitude, point.Longitude, { unit: 'mile' });
+      let newPoint = { point: point, distance: parseFloat(this.isNull(d, 0)).toFixed(2) };
+
+      result.push(newPoint);
+    });
+
+    this.sortOn(result, 'distance');
+    return result;
   }
 
   /**
@@ -169,7 +225,7 @@ export default class Wu {
 
     this.each(['', 'data-'], (v, k) => {
       this.each(attrs || [], (v2, k2) => {
-        let attr = this.getAttribute(dom, v + k2);
+        let attr = this.getAttr(dom, v + k2);
 
         if (attr) {
           rst[k2] = attr;
