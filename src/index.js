@@ -182,11 +182,11 @@ export default class Wu {
 
   /**
    * sort with nearest geopoint, expect object with two properties: Latitude and Longitude
-   * @param  {array}  points     
-   * @param  {object} origin point 
-   * @return {object}           
+   * @param  {array}    points     
+   * @param  {object}   origin point 
+   * @param  {function} callback    the closure function on result
    */
-  geoOrderByOrigin(points, origin) {
+  geoOrderByOrigin(points, origin, callback) {
     let result = { origin: origin, results: [] };
 
     this.each(points, (point) => {
@@ -197,14 +197,14 @@ export default class Wu {
     });
 
     this.sortOn(result.results, 'distance');
-    return result;
+    callback(result);
+    return this;
   }
 
   /**
    * sort with nearest geopoint, expect object with two properties: Latitude and Longitude
    * @param  {array}    points     
-   * @params {string}   jsonpUrl  the jsonp url without any query string
-   * @param  {function} callback    the closure function on result
+   * @params {string}   jsonpUrl    the jsonp url without any query string
    */
   geoOrderByIP(points, jsonpUrl, callback) {
     let that = this;
@@ -220,6 +220,8 @@ export default class Wu {
 
       callback(data);
     });
+
+    return this;
   }
 
   /**
@@ -234,6 +236,7 @@ export default class Wu {
     jsonpUrl = jsonpUrl || '//freegeoip.net/json';
     jsonpUrl += ((jsonpUrl.indexOf('?') > 0) ? '&' : '?') + 'callback=' + callbackVar;
     this.loadScript(jsonpUrl);
+    return this;
   }
 
   /**
