@@ -182,11 +182,11 @@ export default class Wu {
 
   /**
    * sort with nearest geopoint, expect object with two properties: Latitude and Longitude
-   * @param  {object} origin point 
    * @param  {array}  points     
+   * @param  {object} origin point 
    * @return {array}           
    */
-  geoOrderByOrigin(origin, points) {
+  geoOrderByOrigin(points, origin) {
     let result = [];
 
     this.each(points, (point) => {
@@ -198,6 +198,43 @@ export default class Wu {
 
     this.sortOn(result, 'distance');
     return result;
+  }
+
+  /**
+   * sort with nearest geopoint, expect object with two properties: Latitude and Longitude
+   * @param  {array}    points     
+   * @params {string}   jsonpUrl  the jsonp url without any query string
+   * @param  {function} callback    the closure function on result
+   * @return {array}           
+   */
+  geoOrderByIP(points, jsonpUrl, callback) {
+    let that = this;
+
+    this.geoByIP(jsonpUrl, (rst) => {
+      let results = [];
+
+      if (rst.latitude) {
+        rst.Latitude = rst.latitude;
+        rst.Longitude = rst.longitude;
+        results = that.geoOrderByOrigin(points, rst);
+      }
+
+      callback(results);
+    });
+  }
+
+  /**
+   * locate geo by IP
+   * @param  {string}   jsonpUrl    the jsonp url without any query string
+   * @param  {function} callback    the closure function on result
+   */
+  geoByIP(jsonpUrl, callback) {
+    let callbackVar = 'mycb' + (new Date()).getTime();
+    
+    this.win[callbackVar] = callback;
+    jsonpUrl = jsonpUrl || '//freegeoip.net/json';
+    jsonpUrl += ((jsonpUrl.indexOf('?') > 0) ? '&' : '?') + 'callback=' + callbackVar;
+    this.loadScript(jsonpUrl);
   }
 
   /**
@@ -385,6 +422,10 @@ export default class Wu {
       if (this.has(obj, key)) keys.push(key);
     }
     return keys;
+  }
+
+  loadScript(uri, callbackFunc) {
+    this.loadScripts([uri], callbackFunc);
   }
 
   loadScripts(uris, callbackFunc) {
