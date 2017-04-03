@@ -49,40 +49,6 @@ function detectIe() {
   return false;
 };
 
-function loadSingleScript(uri, callbackFunc) {
-  let tag;
-
-  /* jshint -W040 */
-  function maybeDone() {
-    if (this.readyState === undefined || this.readyState === 'complete') {
-      // Pull the tags out based on the actual element in case IE ever
-      // intermingles the onload and onreadystatechange handlers for the same
-      // script block before notifying for another one.
-      if (typeof (callbackFunc) === 'function') callbackFunc();
-    }
-  }
-  /* jshint +W040 */
-
-  if (uri.indexOf('//') < 0) {
-    uri = 'http:' + uri;
-  }
-
-  // Prefix protocol
-  if ((myRoot.location || {}).protocol === 'file') {
-    uri = uri.replace('https://', 'http://');
-  }
-
-  tag = this.doc.createElement('script');
-  tag.type = 'text/javascript';
-  tag.src = uri;
-  if (callbackFunc) {
-    tag.onload = maybeDone;
-    tag.onreadystatechange = maybeDone;
-  }
-
-  this.doc.body.appendChild(tag);
-};
-
 export default class Wu {
   constructor() {
     this._name = 'Wu';
@@ -428,11 +394,42 @@ export default class Wu {
   }
 
   loadScript(uri, callbackFunc) {
-    this.loadScripts([uri], callbackFunc);
+    let tag;
+
+    /* jshint -W040 */
+    function maybeDone() {
+      if (this.readyState === undefined || this.readyState === 'complete') {
+        // Pull the tags out based on the actual element in case IE ever
+        // intermingles the onload and onreadystatechange handlers for the same
+        // script block before notifying for another one.
+        if (typeof (callbackFunc) === 'function') callbackFunc();
+      }
+    }
+    /* jshint +W040 */
+
+    if (uri.indexOf('//') < 0) {
+      uri = 'http:' + uri;
+    }
+
+    // Prefix protocol
+    if ((myRoot.location || {}).protocol === 'file') {
+      uri = uri.replace('https://', 'http://');
+    }
+
+    tag = this.doc.createElement('script');
+    tag.type = 'text/javascript';
+    tag.src = uri;
+    if (callbackFunc) {
+      tag.onload = maybeDone;
+      tag.onreadystatechange = maybeDone;
+    }
+
+    this.doc.body.appendChild(tag);
   }
 
   loadScripts(uris, callbackFunc) {
-    let toProcess;
+    let toProcess,
+      that = this;
 
     function processNext() {
       if (toProcess.length <= 0) {
@@ -443,7 +440,7 @@ export default class Wu {
         let item = toProcess[0];
 
         toProcess.splice(0, 1);
-        loadSingleScript(item, processNext);
+        that.loadScript(item, processNext);
       }
     }
 
