@@ -187,11 +187,12 @@ export default class Wu {
    * @param  {function} callback    the closure function on result
    */
   geoOrderByOrigin(points, origin, callback) {
+    let that = this;
     let result = { origin: origin, results: [] };
 
     this.each(points, (point) => {
-      let d = this.distance(origin.Latitude, origin.Longitude, point.Latitude, point.Longitude, { unit: 'mile' });
-      let newPoint = { point: point, distance: parseFloat(this.isNull(d, 0)).toFixed(2) };
+      let d = that.geoDistance(origin.Latitude, origin.Longitude, point.Latitude, point.Longitude, { unit: 'mile' });
+      let newPoint = { point: point, distance: parseFloat(that.isNull(d, 0)).toFixed(2) };
 
       result.results.push(newPoint);
     });
