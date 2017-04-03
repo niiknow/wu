@@ -177,15 +177,11 @@ export default class Wu {
     let that = this;
 
     this.geoByIP(jsonpUrl, (rst) => {
-      let data = { origin: rst, results: [] };
-
       if (rst.latitude) {
         rst.Latitude = rst.latitude;
         rst.Longitude = rst.longitude;
-        data = that.geoOrderByOrigin(points, rst);
+        that.geoOrderByOrigin(points, rst, callback);
       }
-
-      callback(data);
     });
 
     return this;
