@@ -1,4 +1,4 @@
-var myRoot = {navigator: {userAgent: ''}, location: {protocol: 'file'}};
+var myRoot = { navigator: { userAgent: '' }, location: { protocol: 'file' } };
 
 // Establish the object that gets returned to break out of a loop iteration.
 const breaker = {};
