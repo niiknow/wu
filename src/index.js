@@ -399,6 +399,25 @@ export default class Wu {
 
     return this.sortOn(groups, 'key');
   }
+  /**
+   * helper method to determine if an element has class
+   * @param  {HTMLElement}  el
+   * @param  {string}       cls class names
+   * @return {Boolean}
+   */
+  hasCls(el, cls) {
+    let i, k, len, ref, v;
+
+    ref = cls.split(' ');
+    for (k = i = 0, len = ref.length; i < len; k = ++i) {
+      v = ref[k];
+      if ((' ' + el.className + ' ').indexOf(' ' + v + ' ') >= 0) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   has(obj, key) {
     return hasOwnProperty.call(obj, key);
@@ -420,6 +439,33 @@ export default class Wu {
       if (this.has(obj, key)) keys.push(key);
     }
     return keys;
+  }
+
+  /**
+   * Helper method to inject your own css
+   * @param  {string} id  css id
+   * @param  {string} css the css text
+   * @return {Object}
+   */
+  injectStyle(id, css) {
+    let el, elx, self = this;
+
+    el = self.doc.getElementById(id);
+    if (!el) {
+      el = self.doc.createElement('style');
+      el.id = id;
+      el.type = 'text/css';
+      if (el.styleSheet) {
+        el.styleSheet.cssText = css;
+      } else {
+        el.appendChild(self.doc.createTextNode(css));
+      }
+      elx = self.doc.getElementsByTagName('link')[0];
+      elx = elx || (self.doc.head || self.doc.getElementsByTagName('head')[0]).lastChild;
+      elx.parentNode.insertBefore(el, elx);
+    }
+    
+    return self;
   }
 
   loadScript(uri, callbackFunc) {
@@ -488,12 +534,11 @@ export default class Wu {
 
   } // loadScripts
 
-  loadIframe(parentEl, html) {
-    let iframe = this.doc.createElement('iframe');
+  loadIframe(parentEl, html, id, className) {
+    let iframe = this.createiFrame(id, className);
 
     parentEl[0].appendChild(iframe);
 
-    /* jshint -W107 */
     if (iframe.contentWindow) {
       iframe.contentWindow.contents = html;
       iframe.src = 'javascript:window["contents"]';
@@ -504,7 +549,6 @@ export default class Wu {
       doc.write(html);
       doc.close();
     }
-    /* jshint +W107 */
 
     return iframe;
   } // loadIframe
