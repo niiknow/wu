@@ -57,7 +57,7 @@ const config = {
     ]
   },
   resolve: {
-    modules: [path.resolve('./src')],
+    modules: [path.resolve('./src'), 'node_modules'],
     extensions: ['.json', '.js']
 /*    alias: {
       '$inc': path.resolve(__dirname, './lib/index.js')

@@ -1,6 +1,6 @@
 {
   "name": "wu",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "web utils",
   "main": "lib/Wu.js",
   "scripts": {
@@ -41,5 +41,11 @@
   "bugs": {
     "url": "https://github.comn/niiknow/wu/issues"
   },
-  "homepage": "https://github.com/niiknow/wu"
+  "homepage": "https://github.com/niiknow/wu",
+  "dependencies": {
+    "component-cookie": "github:component/cookie",
+    "component-emitter": "github:component/emitter",
+    "debounce": "github:component/debounce",
+    "domify": "github:component/domify"
+  }
 }

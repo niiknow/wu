@@ -1,3 +1,8 @@
+var domify = require('domify');
+var emitter = require('component-emitter');
+var debounce = require('debounce');
+var cookie = require('component-cookie');
+
 var myRoot = { navigator: { userAgent: '' }, location: { protocol: 'file' } };
 
 // Establish the object that gets returned to break out of a loop iteration.
@@ -68,6 +73,10 @@ export default class Wu {
     this.any = this.some;
     this.getAttribute = this.getAttr;
     this.setAttribute = this.setAttr;
+    this.emitter = emitter;
+    this.domify = domify;
+    this.debounce = debounce;
+    this.cookie = cookie;
   }
   
   get name() {
@@ -110,6 +119,30 @@ export default class Wu {
       obj[evtName] = null;
     }
     return this;
+  }
+
+  /**
+   * safely decode the string
+   * @param  {string} str
+   */
+  decode(str) {
+    try {
+      return decodeURIComponent(str.replace(/\+/g, ' '));
+    } catch (e) {
+      return str;
+    }
+  }
+
+  /**
+   * safely encode the string
+   * @param  {string} str
+   */
+  encode(str) {
+    try {
+      return encodeURIComponent(str);
+    } catch (e) {
+      return str;
+    }
   }
   
   /**
@@ -515,22 +548,32 @@ export default class Wu {
   }
 
   /**
-   * helper method to parse querystring
+   * helper method to parse querystring to object
    * @param  {string} qstr the querystring
    * @return {object}      result
    */
-  parseQueryString(qstr) {
+  queryParseString(qstr) {
     qstr = (qstr || '').replace('?', '').replace('#', '');
-    let d = decodeURIComponent,
-      query = {},
+    let pattern = /(\w+)\[(\d+)\]/;
+    let decode = this.decode,
+      obj = {},
       a = qstr.split('&');
 
     for (let i = 0; i < a.length; i++) {
-      let b = a[i].split('=');
+      let parts = a[i].split('='),
+        key = decode(parts[0]),
+        m = pattern.exec(key);
 
-      query[d(b[0])] = d(b[1] || '');
+      if (m) {
+        obj[m[1]] = obj[m[1]] || [];
+        obj[m[1]][m[2]] = decode(parts[1]);
+        continue;
+      }
+
+      obj[parts[0]] = decode(parts[1] || '');
     }
-    return query;
+
+    return obj;
   }
 
   request(opts) {
@@ -540,7 +583,7 @@ export default class Wu {
     if (['HEAD', 'GET', 'DELETE'].indexOf(opts.method) > -1) {
       // convert data to query string
       if (opts.data) {
-        opts.url += (opts.url.indexOf('?') > 0 ? '?' : '&') + that.toQueryString(opts.data);
+        opts.url += (opts.url.indexOf('?') > 0 ? '?' : '&') + that.queryStringify(opts.data);
         this.del(opts, 'data');
       }
     } else if (typeof (opts.data) !== 'string') {
@@ -549,7 +592,7 @@ export default class Wu {
         opts.data = JSON.stringify(opts);
       } else {
         // must be form encoded
-        opts.data = that.toQueryString(opts);
+        opts.data = that.queryStringify(opts);
       }
     }
     return that.xhrp(opts);
@@ -608,13 +651,18 @@ export default class Wu {
    * @param  {object} obj the object
    * @return {string}     the query string
    */
-  toQueryString(obj) {
-    let str = '';
+  queryStringify(obj) {
+    let str = '',
+      encode = this.encode;
 
     this.each(obj, (v, k) => {
-      str += `&${k}=${encodeURIComponent(v)}`;
+      str += `&${k}=${encode(v)}`;
     });
     return str.replace('&', '');
+  }
+
+  trim(str) {
+    return (str.trim) ? str.trim() : str.replace(/^\s*|\s*$/g, '');
   }
 
   /**
