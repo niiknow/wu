@@ -2,6 +2,7 @@ var domify = require('domify');
 var emitter = require('component-emitter');
 var debounce = require('debounce');
 var cookie = require('component-cookie');
+var debug = require('debug');
 
 var myRoot = { navigator: { userAgent: '' }, location: { protocol: 'file' } };
 
@@ -77,6 +78,13 @@ export default class Wu {
     this.domify = domify;
     this.debounce = debounce;
     this.cookie = cookie;
+    this.debug = debug;
+
+    // dummy up console log for IE
+    if (typeof this.win.console === 'undefined') {
+      this.win.console = { log: () => {} };
+      this.win.console.error = this.win.console.debug = this.win.console.info = this.win.console.log;
+    }
   }
   
   get name() {
@@ -534,7 +542,7 @@ export default class Wu {
 
   } // loadScripts
 
-  loadIframe(parentEl, html, id, className) {
+  loadiFrame(parentEl, html, id, className) {
     let iframe = this.createiFrame(id, className);
 
     parentEl[0].appendChild(iframe);
@@ -551,7 +559,7 @@ export default class Wu {
     }
 
     return iframe;
-  } // loadIframe
+  } // loadiFrame
 
   map(obj, iterator, context) {
     let results = [];
