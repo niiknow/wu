@@ -1,6 +1,6 @@
 {
   "name": "wu",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "web utils",
   "main": "lib/Wu.js",
   "scripts": {
@@ -43,9 +43,12 @@
   },
   "homepage": "https://github.com/niiknow/wu",
   "dependencies": {
+    "babel-polyfill": "^6.23.0",
     "component-cookie": "github:component/cookie",
     "component-emitter": "github:component/emitter",
     "debounce": "github:component/debounce",
-    "domify": "github:component/domify"
+    "domify": "github:component/domify",
+    "es6-promise": "^4.1.0",
+    "whatwg-fetch": "^2.0.3"
   }
 }

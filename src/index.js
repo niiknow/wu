@@ -89,7 +89,11 @@ export default class Wu {
       this.win.console.error = this.win.console.debug = this.win.console.info = this.win.console.log;
     }
   }
-  
+
+  /**
+   * get the name of the library
+   * @return {string} library name
+   */
   get name() {
     return this._name;
   }
