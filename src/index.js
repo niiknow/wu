@@ -55,6 +55,9 @@ function detectIe() {
   return false;
 };
 
+/**
+ * Wu is short for Web Utilities
+ */
 export default class Wu {
   constructor() {
     this._name = 'Wu';
@@ -263,6 +266,12 @@ export default class Wu {
     return (el.getAttribute) ? el.getAttribute(attr) : el[attr];
   }
 
+  /**
+   * help method to get multiple attributes
+   * @param  {object} dom   element
+   * @param  {array}  attrs array of attribute names
+   * @return {string}       result object
+   */
   getAttrs(dom, attrs) {
     let rst = {};
 
@@ -281,9 +290,9 @@ export default class Wu {
 
   /**
    * helper method to set attribute
-   * @param {[type]} dom   element
-   * @param {[type]} attr  attribute name
-   * @param {[type]} value attribute value
+   * @param {object} dom   element
+   * @param {string} attr  attribute name
+   * @param {object} value attribute value
    */
   setAttr(dom, attr, value) {
     let el = dom[0] || dom;
@@ -297,6 +306,28 @@ export default class Wu {
     return el;
   }
 
+  /**
+   * help method to set attributes
+   * @param {object} dom   element
+   * @param {object} attrs key value pair object
+   */
+  setAttrs(dom, attrs) {
+    let el = dom[0] || dom;
+    let that = this;
+
+    this.each(attrs || [], (v, k) => {
+      that.setAttr(el, k, v);
+    });
+
+    return el;
+  }
+
+  /**
+   * determine if array contain item
+   * @param  {array}  obj    array
+   * @param  {object} target item
+   * @return {bool}          true if item exists
+   */
   contains(obj, target) {
     if (this.isNull(obj, null) === null) return false;
     if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) !== -1;
@@ -315,6 +346,7 @@ export default class Wu {
 
     if (id) iframe.id = id;
     if (className) iframe.className = className;
+
     iframe.frameBorder = '0';
     iframe.marginWidth = '0';
     iframe.marginHeight = '0';
@@ -322,9 +354,16 @@ export default class Wu {
     iframe.setAttribute('allowtransparency', 'true');
     iframe.width = '100%';
     iframe.height = '100%';
+
     return iframe;
   }
 
+  /**
+   * delete an object property
+   * @param  {object} obj the object
+   * @param  {string} key the property name
+   * @return {object}     the result object
+   */
   del(obj, key) {
     obj[key] = undefined;
     try {
@@ -340,9 +379,16 @@ export default class Wu {
 
       return items;
     }
+
     return obj;
   }
 
+  /**
+   * perform forEach
+   * @param  {object} obj      object or array
+   * @param  {func}   iterator function handler
+   * @param  {object} context  the this context object
+   */
   each(obj, iterator, context) {
     if (this.isNull(obj, null) === null) return;
     if (nativeForEach && obj.forEach === nativeForEach) {
@@ -360,19 +406,33 @@ export default class Wu {
     }
   }
 
-  extend(obj) {
+  /**
+   * apply all valid property of source object to dest object
+   * @param  {object} dest the dest object
+   * @param  {object} src  the source object
+   * @return {object}      the result object
+   */
+  extend(dest) {
     this.each(slice.call(arguments, 1), (source) => {
       if (typeof (source) !== 'undefined') {
         this.each(source, (v, k) => {
           if (this.isNull(v, null) !== null) {
-            obj[k] = v;
+            dest[k] = v;
           }
         });
       }
     });
-    return obj;
+
+    return dest;
   }
 
+  /**
+   * group a list by some key attribute
+   * @param  {array}  list                list or array of objects
+   * @param  {string} attribute           object key property name
+   * @param  {func}   postProcessFunction do something on each group
+   * @return {array}                      group result
+   */
   groupBy(list, attribute, postProcessFunction) {
     if (this.isNull(list, null) === null) return [];
 
@@ -407,6 +467,7 @@ export default class Wu {
 
     return this.sortOn(groups, 'key');
   }
+
   /**
    * helper method to determine if an element has class
    * @param  {HTMLElement}  el
@@ -427,10 +488,21 @@ export default class Wu {
     return false;
   }
 
+  /**
+   * helper method to determine if an object has a property
+   * @param  {object}  obj the object
+   * @param  {string}  key the property name
+   * @return {Boolean}
+   */
   has(obj, key) {
     return hasOwnProperty.call(obj, key);
   }
 
+  /**
+   * get all object keys
+   * @param  {object} obj the object
+   * @return {array}      all object property names
+   */
   keys(obj) {
     if (nativeKeys) {
       return nativeKeys(obj);
@@ -446,11 +518,14 @@ export default class Wu {
     for (key in obj) {
       if (this.has(obj, key)) keys.push(key);
     }
+
     return keys;
   }
 
   /**
-   * Helper method to inject your own css
+   * Helper method to inject your own css.
+   * You must first create the element
+   * and property it with an id.
    * @param  {string} id  css id
    * @param  {string} css the css text
    * @return {Object}
@@ -459,6 +534,7 @@ export default class Wu {
     let el, elx, self = this;
 
     el = self.doc.getElementById(id);
+
     if (!el) {
       el = self.doc.createElement('style');
       el.id = id;
@@ -476,10 +552,14 @@ export default class Wu {
     return self;
   }
 
+  /**
+   * helper method to load a single script
+   * @param  {string} uri          string url
+   * @param  {func}   callbackFunc execute on load
+   */
   loadScript(uri, callbackFunc) {
     let tag;
 
-    /* jshint -W040 */
     function maybeDone() {
       if (this.readyState === undefined || this.readyState === 'complete') {
         // Pull the tags out based on the actual element in case IE ever
@@ -488,13 +568,12 @@ export default class Wu {
         if (typeof (callbackFunc) === 'function') callbackFunc();
       }
     }
-    /* jshint +W040 */
 
     if (uri.indexOf('//') < 0) {
       uri = 'http:' + uri;
     }
 
-    // Prefix protocol
+    // prefix protocol
     if ((myRoot.location || {}).protocol === 'file') {
       uri = uri.replace('https://', 'http://');
     }
@@ -510,6 +589,11 @@ export default class Wu {
     this.doc.body.appendChild(tag);
   }
 
+  /**
+   * helper method to load multiple scripts synchronously
+   * @param  {array}  uris         array of script uris
+   * @param  {func}   callbackFunc callback when all are loaded
+   */
   loadScripts(uris, callbackFunc) {
     let toProcess,
       that = this;
@@ -542,6 +626,14 @@ export default class Wu {
 
   } // loadScripts
 
+  /**
+   * helper method to load an iframe
+   * @param  {HTMLElement} parentEl  the element
+   * @param  {string} html      the html string
+   * @param  {string} id        element id
+   * @param  {string} className element class names
+   * @return {HTMLElement}           the iframe
+   */
   loadiFrame(parentEl, html, id, className) {
     let iframe = this.createiFrame(id, className);
 
@@ -561,6 +653,13 @@ export default class Wu {
     return iframe;
   } // loadiFrame
 
+  /**
+   * call function for each object property and return result as array
+   * @param  {object} obj      the object
+   * @param  {func}   iterator the function to call on each property
+   * @param  {object} context  object to apply with
+   * @return {array}          array result of each property call
+   */
   map(obj, iterator, context) {
     let results = [];
 
@@ -570,9 +669,17 @@ export default class Wu {
     this.each(obj, (value, index, list) => {
       results.push(iterator.call(context, value, index, list));
     });
+
     return results;
   }
 
+  /**
+   * create a distinct list of object by attribute
+   * useful for converting array to object
+   * @param  {array}  list      list of objects
+   * @param  {string} attribute the key to map
+   * @return {object}           the object result
+   */
   mapObject(list, attribute) {
     let obj = {};
 
@@ -596,6 +703,7 @@ export default class Wu {
         });
       }
     }
+
     return obj;
   }
 
@@ -628,6 +736,26 @@ export default class Wu {
     return obj;
   }
 
+  /**
+   * reverse object to query string
+   * @param  {object} obj the object
+   * @return {string}     the query string
+   */
+  queryStringify(obj) {
+    let str = '',
+      encode = this.encode;
+
+    this.each(obj, (v, k) => {
+      str += `&${k}=${encode(v)}`;
+    });
+    return str.replace('&', '');
+  }
+
+  /**
+   * make http request
+   * @param  {object} opts options: headers, method, data
+   * @return {[type]}      [description]
+   */
   request(opts) {
     let that = this;
 
@@ -639,10 +767,12 @@ export default class Wu {
         this.del(opts, 'data');
       }
     } else if (typeof (opts.data) !== 'string') {
+
       // handle non-string content body
       if ((opts.headers['Content-Type'] + '').indexOf('json') > 0) {
         opts.data = JSON.stringify(opts);
       } else {
+
         // must be form encoded
         opts.data = that.queryStringify(opts);
       }
@@ -662,6 +792,13 @@ export default class Wu {
     return str;
   }
 
+  /**
+   * aka any, determine if any object object property are true
+   * @param  {object} obj       the object
+   * @param  {func}   predicate function that return Boolean
+   * @param  {object} context   the this reference for function
+   * @return {Boolean}          the result
+   */
   some(obj, predicate, context) {
     let result = false;
 
@@ -673,9 +810,16 @@ export default class Wu {
       if (result || (result = predicate.call(context, value, index, list))) return breaker;
       return null;
     });
-    return !!result;
+
+    return result;
   }
 
+  /**
+   * sort a list of object base on some property name
+   * @param  {array}  collection list of objects
+   * @param  {string} name       property name
+   * @return {object}            sorted list
+   */
   sortOn(collection, name) {
     if (this.isNull(collection, null) === null) return null;
     if (collection.length <= 0) return [];
@@ -699,20 +843,10 @@ export default class Wu {
   }
 
   /**
-   * reverse object to query string
-   * @param  {object} obj the object
-   * @return {string}     the query string
+   * trim string
+   * @param  {string} str the string
+   * @return {string}     trimmed result
    */
-  queryStringify(obj) {
-    let str = '',
-      encode = this.encode;
-
-    this.each(obj, (v, k) => {
-      str += `&${k}=${encode(v)}`;
-    });
-    return str.replace('&', '');
-  }
-
   trim(str) {
     return (str.trim) ? str.trim() : str.replace(/^\s*|\s*$/g, '');
   }
@@ -743,6 +877,7 @@ export default class Wu {
       options = options || {};
       options.url = url;
     }
+
     // Create the XHR request itself
     let req = this.getAjaxObject();
 
@@ -753,6 +888,7 @@ export default class Wu {
         req = new XDomainRequest();
       }
     }
+
     // if there are no options, it failed
     if (!options || options.length === 0) {
       errback({
@@ -760,14 +896,18 @@ export default class Wu {
         error: new Error('xhr expects an url or an options object, none given.')
       });
     }
+
     // normalize method
     options.method = options.method || 'GET';
+
     // open url
     req.open(options.method, options.url, req.withCredentials);
+
     // set request header
     this.each(options.headers || {}, (value, key) => {
       req.setRequestHeader(key, value);
     });
+
     this.addEvent(req, 'readystatechange', () => {
       if (req.readyState === 4 && (req.status >= 200 && req.status < 400)) {
         // Callbacks for successful requests
@@ -777,24 +917,29 @@ export default class Wu {
           url: req.responseURL
         });
       } else if (req.readyState === 4) {
+
         // Callbacks for failed requests
         errback({
           xhr: req
         });
       }
-      // ignore everything else?
+
+      // ignore everything else
     });
+
     this.addEvent(req, 'error', (err) => {
       errback({
         xhr: req,
         error: err
       });
     });
+
     // send unless prevent by options
     // such as user want to handle file upload
     if (!options.nosend) {
       req.send(options.data || void 0);
     }
+
     return req;
   }
 }
