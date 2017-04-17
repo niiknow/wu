@@ -389,9 +389,9 @@ export default class Wu {
 
   /**
    * perform forEach
-   * @param  {object} obj      object or array
-   * @param  {func}   iterator function handler
-   * @param  {object} context  the this context object
+   * @param  {object}     obj      object or array
+   * @param  {Function}   iterator function handler
+   * @param  {object}     context  the this context object
    */
   each(obj, iterator, context) {
     if (this.isNull(obj, null) === null) return;
@@ -432,9 +432,9 @@ export default class Wu {
 
   /**
    * group a list by some key attribute
-   * @param  {array}  list                list or array of objects
-   * @param  {string} attribute           object key property name
-   * @param  {func}   postProcessFunction do something on each group
+   * @param  {array}      list                list or array of objects
+   * @param  {string}     attribute           object key property name
+   * @param  {Function}   postProcessFunction do something on each group
    * @return {array}                      group result
    */
   groupBy(list, attribute, postProcessFunction) {
@@ -558,8 +558,8 @@ export default class Wu {
 
   /**
    * helper method to load a single script
-   * @param  {string} uri          string url
-   * @param  {func}   callbackFunc execute on load
+   * @param  {string}     uri          string url
+   * @param  {Function}   callbackFunc execute on load
    */
   loadScript(uri, callbackFunc) {
     let tag;
@@ -595,8 +595,8 @@ export default class Wu {
 
   /**
    * helper method to load multiple scripts synchronously
-   * @param  {array}  uris         array of script uris
-   * @param  {func}   callbackFunc callback when all are loaded
+   * @param  {array}      uris         array of script uris
+   * @param  {Function}   callbackFunc callback when all are loaded
    */
   loadScripts(uris, callbackFunc) {
     let toProcess,
@@ -659,9 +659,9 @@ export default class Wu {
 
   /**
    * call function for each object property and return result as array
-   * @param  {object} obj      the object
-   * @param  {func}   iterator the function to call on each property
-   * @param  {object} context  object to apply with
+   * @param  {object}     obj      the object
+   * @param  {Function}   iterator the function to call on each property
+   * @param  {object}     context  object to apply with
    * @return {array}          array result of each property call
    */
   map(obj, iterator, context) {
@@ -758,9 +758,11 @@ export default class Wu {
   /**
    * make http request
    * @param  {object} opts options: headers, method, data
-   * @return {[type]}      [description]
+   * @param  {Function} callback success callback
+   * @param  {Function} errback  fail callback
+   * @return {object}     the request object
    */
-  request(opts) {
+  request(opts, callback, errback) {
     let that = this;
 
     opts.headers = opts.headers || {};
@@ -781,7 +783,8 @@ export default class Wu {
         opts.data = that.queryStringify(opts);
       }
     }
-    return that.xhrp(opts);
+
+    return that.xhr(opts, callback, errback);
   }
 
   /**
@@ -798,9 +801,9 @@ export default class Wu {
 
   /**
    * aka any, determine if any object object property are true
-   * @param  {object} obj       the object
-   * @param  {func}   predicate function that return Boolean
-   * @param  {object} context   the this reference for function
+   * @param  {object}     obj       the object
+   * @param  {Function}   predicate function that return Boolean
+   * @param  {object}     context   the this reference for function
    * @return {Boolean}          the result
    */
   some(obj, predicate, context) {
@@ -856,23 +859,11 @@ export default class Wu {
   }
 
   /**
-   * make xhr request with a promise
-   * @param  {object} opts the options
-   * @return {promise}     a promise
-   */
-  xhrp(opts) {
-    let that = this;
-
-    return new Promise((resolve, reject) => {
-      return that.xhr(opts, resolve, reject);
-    });
-  }
-
-  /**
    * make an xhr request
    * @param  {object}   options  url string or options object
    * @param  {Function} callback
    * @param  {Function} errback  error callback
+   * @return {object}     the request object
    */
   xhr(options, callback, errback) {
     let url = options;
