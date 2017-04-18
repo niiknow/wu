@@ -2,7 +2,7 @@ import domify from 'domify';
 import emitter from 'component-emitter';
 import debounce from 'debounce';
 import cookie from 'component-cookie';
-import debug from'debug';
+import debug from 'debug';
 
 var myRoot = { navigator: { userAgent: '' }, location: { protocol: 'file' } };
 
