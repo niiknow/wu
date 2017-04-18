@@ -19,3 +19,4 @@ describe('Given an instance of my Wu',  () => {
     });
   });
 });
+

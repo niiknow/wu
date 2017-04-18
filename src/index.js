@@ -70,7 +70,7 @@ export default class Wu {
 
     this.isNull = isNull;
     this.win = myRoot;
-    this.doc = document || {};
+    this.doc = this.win.document || {};
 
     this.forEach = this.each;
     this.collect = this.map;
@@ -278,9 +278,10 @@ export default class Wu {
    */
   getAttrs(dom, attrs) {
     let rst = {};
+    let that = this;
 
     this.each(['', 'data-'], (v, k) => {
-      this.each(attrs || [], (v2, k2) => {
+      that.each(attrs || [], (v2, k2) => {
         let attr = this.getAttr(dom, v + k2);
 
         if (attr) {
@@ -388,6 +389,28 @@ export default class Wu {
   }
 
   /**
+   * apply all valid property of default object to dest object where null
+   * @param  {object} dest     the dest object
+   * @param  {object} default  the default object
+   * @return {object}      the result object
+   */
+  defaults(dest) {
+    let that = this;
+
+    this.each(slice.call(arguments, 1), (source) => {
+      if (typeof (source) !== 'undefined') {
+        that.each(source, (v, k) => {
+          if (that.isNull(dest[k], null) === null) {
+            dest[k] = v;
+          }
+        });
+      }
+    });
+
+    return dest;
+  }
+
+  /**
    * perform forEach
    * @param  {object}     obj      object or array
    * @param  {Function}   iterator function handler
@@ -417,10 +440,12 @@ export default class Wu {
    * @return {object}      the result object
    */
   extend(dest) {
+    let that = this;
+
     this.each(slice.call(arguments, 1), (source) => {
       if (typeof (source) !== 'undefined') {
-        this.each(source, (v, k) => {
-          if (this.isNull(v, null) !== null) {
+        that.each(source, (v, k) => {
+          if (that.isNull(v, null) !== null) {
             dest[k] = v;
           }
         });
@@ -442,14 +467,15 @@ export default class Wu {
 
     // First, reset declare result.
     let groups = [],
+      that = this,
       grouper = {};
 
     // this make sure all elements are correctly sorted
-    this.each(list, (item) => {
+    that.each(list, (item) => {
       let groupKey = item[attribute],
         group = grouper[groupKey];
 
-      if (this.isNull(group, null) === null) {
+      if (that.isNull(group, null) === null) {
         group = {
           key: groupKey,
           items: []
@@ -770,7 +796,7 @@ export default class Wu {
       // convert data to query string
       if (opts.data) {
         opts.url += (opts.url.indexOf('?') > 0 ? '?' : '&') + that.queryStringify(opts.data);
-        this.del(opts, 'data');
+        opts = this.del(opts, 'data');
       }
     } else if (typeof (opts.data) !== 'string') {
 
@@ -857,6 +883,20 @@ export default class Wu {
   trim(str) {
     return (str.trim) ? str.trim() : str.replace(/^\s*|\s*$/g, '');
   }
+
+/*eslint-disable */
+
+  /**
+   * Taken straight from jed's gist: https://gist.github.com/982883
+   * 
+   * @param  {number} a placeholder
+   * @return {string}   a random v4 UUID of the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+   */
+  uuid(a) {
+    return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,this.uuid);
+  }
+
+/*eslint-enable */
 
   /**
    * make an xhr request
