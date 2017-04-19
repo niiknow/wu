@@ -26,7 +26,7 @@ const nativeForEach = ArrayProto.forEach,
   nativeKeys = Object.keys;
 
 function isNull(obj, defaultValue) {
-  return (typeof (obj) === 'undefined' || obj === null) ? defaultValue : obj;
+  return (typeof (obj) === 'undefined' || obj === null || obj === 'null') ? defaultValue : obj;
 };
 
 const userAgent = myRoot.navigator.userAgent;
@@ -55,6 +55,23 @@ function detectIe() {
   return false;
 };
 
+function each(obj, iterator, context) {
+  if (isNull(obj, null) === null) return;
+  if (nativeForEach && obj.forEach === nativeForEach) {
+    obj.forEach(iterator, context);
+  } else if (obj.length === +obj.length) {
+    for (let i = 0, length = obj.length; i < length; i++) {
+      if (iterator.call(context, obj[i], i, obj) === breaker) return;
+    }
+  } else {
+    let keys = this.keys(obj);
+
+    for (let j = 0, length2 = keys.length; j < length2; j++) {
+      if (iterator.call(context, obj[keys[j]], keys[j], obj) === breaker) return;
+    }
+  }
+};
+
 /**
  * Wu is short for Web Utilities
  */
@@ -71,8 +88,7 @@ export default class Wu {
     this.isNull = isNull;
     this.win = myRoot;
     this.doc = this.win.document || {};
-
-    this.forEach = this.each;
+    this.each = this.forEach = each;
     this.collect = this.map;
     this.any = this.some;
     this.getAttribute = this.getAttr;
@@ -139,6 +155,7 @@ export default class Wu {
   /**
    * safely decode the string
    * @param  {string} str
+   * @return {string} url decoded string
    */
   decode(str) {
     try {
@@ -151,6 +168,7 @@ export default class Wu {
   /**
    * safely encode the string
    * @param  {string} str
+   * @return {string} url encoded string
    */
   encode(str) {
     try {
@@ -204,7 +222,7 @@ export default class Wu {
     let that = this;
     let result = { origin: origin, results: [] };
 
-    this.each(points, (point) => {
+    each(points, (point) => {
       let d = that.geoDistance(origin.Latitude, origin.Longitude, point.Latitude, point.Longitude, { unit: 'mile' });
       let newPoint = { point: point, distance: parseFloat(that.isNull(d, 0)).toFixed(2) };
 
@@ -280,9 +298,9 @@ export default class Wu {
     let rst = {};
     let that = this;
 
-    this.each(['', 'data-'], (v, k) => {
-      that.each(attrs || [], (v2, k2) => {
-        let attr = this.getAttr(dom, v + k2);
+    each(['', 'data-'], (v, k) => {
+      each(attrs || [], (v2, k2) => {
+        let attr = that.getAttr(dom, v + k2);
 
         if (attr) {
           rst[k2] = attr;
@@ -320,7 +338,7 @@ export default class Wu {
     let el = dom[0] || dom;
     let that = this;
 
-    this.each(attrs || [], (v, k) => {
+    each(attrs || [], (v, k) => {
       that.setAttr(el, k, v);
     });
 
@@ -376,7 +394,7 @@ export default class Wu {
     } catch (e) {
       let items = {};
 
-      this.each(obj, (v, k) => {
+      each(obj, (v, k) => {
         if (k !== key) {
           items[k] = v;
         }
@@ -395,12 +413,10 @@ export default class Wu {
    * @return {object}      the result object
    */
   defaults(dest) {
-    let that = this;
-
-    this.each(slice.call(arguments, 1), (source) => {
+    each(slice.call(arguments, 1), (source) => {
       if (typeof (source) !== 'undefined') {
-        that.each(source, (v, k) => {
-          if (that.isNull(dest[k], null) === null) {
+        each(source, (v, k) => {
+          if (isNull(dest[k], null) === null) {
             dest[k] = v;
           }
         });
@@ -411,41 +427,16 @@ export default class Wu {
   }
 
   /**
-   * perform forEach
-   * @param  {object}     obj      object or array
-   * @param  {Function}   iterator function handler
-   * @param  {object}     context  the this context object
-   */
-  each(obj, iterator, context) {
-    if (this.isNull(obj, null) === null) return;
-    if (nativeForEach && obj.forEach === nativeForEach) {
-      obj.forEach(iterator, context);
-    } else if (obj.length === +obj.length) {
-      for (let i = 0, length = obj.length; i < length; i++) {
-        if (iterator.call(context, obj[i], i, obj) === breaker) return;
-      }
-    } else {
-      let keys = this.keys(obj);
-
-      for (let j = 0, length2 = keys.length; j < length2; j++) {
-        if (iterator.call(context, obj[keys[j]], keys[j], obj) === breaker) return;
-      }
-    }
-  }
-
-  /**
    * apply all valid property of source object to dest object
    * @param  {object} dest the dest object
    * @param  {object} src  the source object
    * @return {object}      the result object
    */
   extend(dest) {
-    let that = this;
-
-    this.each(slice.call(arguments, 1), (source) => {
+    each(slice.call(arguments, 1), (source) => {
       if (typeof (source) !== 'undefined') {
-        that.each(source, (v, k) => {
-          if (that.isNull(v, null) !== null) {
+        each(source, (v, k) => {
+          if (isNull(v, null) !== null) {
             dest[k] = v;
           }
         });
@@ -467,15 +458,14 @@ export default class Wu {
 
     // First, reset declare result.
     let groups = [],
-      that = this,
       grouper = {};
 
     // this make sure all elements are correctly sorted
-    that.each(list, (item) => {
+    each(list, (item) => {
       let groupKey = item[attribute],
         group = grouper[groupKey];
 
-      if (that.isNull(group, null) === null) {
+      if (isNull(group, null) === null) {
         group = {
           key: groupKey,
           items: []
@@ -488,7 +478,7 @@ export default class Wu {
     // finally, sort on group
     let i = 0;
 
-    this.each(grouper, (myGroup) => {
+    each(grouper, (myGroup) => {
       myGroup.$idx = i++;
       groups.push(myGroup);
 
@@ -696,7 +686,7 @@ export default class Wu {
     if (this.isNull(obj, null) === null) return results;
     if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
 
-    this.each(obj, (value, index, list) => {
+    each(obj, (value, index, list) => {
       results.push(iterator.call(context, value, index, list));
     });
 
@@ -775,7 +765,7 @@ export default class Wu {
     let str = '',
       encode = this.encode;
 
-    this.each(obj, (v, k) => {
+    each(obj, (v, k) => {
       str += `&${k}=${encode(v)}`;
     });
     return str.replace('&', '');
@@ -839,7 +829,7 @@ export default class Wu {
     if (this.isNull(obj, null) === null) return result;
     if (nativeSome && obj.some === nativeSome) return obj.some(predicate, context);
 
-    this.each(obj, (value, index, list) => {
+    each(obj, (value, index, list) => {
       if (result || (result = predicate.call(context, value, index, list))) return breaker;
       return null;
     });
@@ -939,7 +929,7 @@ export default class Wu {
     req.open(options.method, options.url, req.withCredentials);
 
     // set request header
-    this.each(options.headers || {}, (value, key) => {
+    each(options.headers || {}, (value, key) => {
       req.setRequestHeader(key, value);
     });
 

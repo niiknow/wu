@@ -1,6 +1,6 @@
 {
   "name": "wu",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "web utils",
   "main": "lib/Wu.js",
   "scripts": {
