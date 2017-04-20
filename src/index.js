@@ -105,10 +105,10 @@ export default class Wu {
       this.win.console.error = this.win.console.debug = this.win.console.info = this.win.console.log;
     }
 
-    let hostname = this.win.location.hostname.toLowerCase();
+    let hostname = this.trim(this.win.location.hostname.toLowerCase());
 
     // init current site config
-    this.site = { hostname: hostname, domain: hostname.toLowerCase().replace('www.', ''), config: {} };
+    this.site = { hostname: hostname, domain: hostname.replace('www.', ''), config: {} };
   }
 
   /**
