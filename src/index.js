@@ -264,13 +264,7 @@ export default class Wu {
    * @param  {function} callback    the closure function on result
    */
   geoByIP(jsonpUrl, callback) {
-    let callbackVar = 'mycb' + (new Date()).getTime();
-    
-    this.win[callbackVar] = callback;
-    jsonpUrl = jsonpUrl || '//freegeoip.net/json';
-    jsonpUrl += ((jsonpUrl.indexOf('?') > 0) ? '&' : '?') + 'callback=' + callbackVar;
-    this.loadScript(jsonpUrl);
-    return this;
+    this.jsonp(jsonpUrl || '//freegeoip.net/json', callback);
   }
 
   /**
@@ -575,6 +569,20 @@ export default class Wu {
     }
     
     return self;
+  }
+
+  /**
+   * jsonp load
+   * @param  {string}   uri      jsonp url with callback query string
+   * @param  {Function} callback jsonp handler
+   */
+  jsonp(uri, callback) {
+    let callbackVar = 'wucb' + (new Date()).getTime();
+    
+    this.win[callbackVar] = callback;
+    uri = uri;
+    uri += ((uri.indexOf('?') > 0) ? '&' : '?') + 'callback=' + callbackVar;
+    this.loadScript(uri);
   }
 
   /**
