@@ -18,7 +18,7 @@ let banner = [
 plugins.push( new webpack.BannerPlugin(banner) );
 
 if (env === 'build') {
-  plugins.push(new UglifyJsPlugin({ minimize: true }));
+  plugins.push(new UglifyJsPlugin({ minimize: true, sourceMap: true }));
   outputFile = libraryName + '.min.js';
 } else {
   outputFile = libraryName + '.js';
