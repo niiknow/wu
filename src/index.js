@@ -4,7 +4,7 @@ import debounce from 'debounce';
 import cookie from 'component-cookie';
 import debug from 'debug';
 
-var myRoot = { navigator: { userAgent: '' }, location: { protocol: 'file' } };
+var myRoot = { navigator: { userAgent: '' }, location: { protocol: 'file', hostname: '' } };
 
 // Establish the object that gets returned to break out of a loop iteration.
 const breaker = {};
@@ -105,8 +105,7 @@ export default class Wu {
       this.win.console.error = this.win.console.debug = this.win.console.info = this.win.console.log;
     }
 
-    let location = this.win.location || { hostname: '' };
-    let hostname = location.hostname.toLowerCase();
+    let hostname = this.win.location.hostname.toLowerCase();
 
     // init current site config
     this.site = { hostname: hostname, domain: hostname.toLowerCase().replace('www.', ''), config: {} };
