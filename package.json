@@ -1,8 +1,8 @@
 {
   "name": "wu",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "web utils",
-  "main": "lib/Wu.js",
+  "main": "lib/wu.js",
   "scripts": {
     "build": "webpack --env build",
     "dev": "webpack --progress --colors --watch --env dev",

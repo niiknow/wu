@@ -6,7 +6,7 @@ const path = require('path');
 const env  = require('yargs').argv.env; // use --env with webpack 2
 const pkg = require('./package.json');
 
-let libraryName = 'Wu';
+let libraryName = pkg.name;
 let plugins = [], outputFile;
 
 let banner = [
