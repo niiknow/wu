@@ -104,6 +104,12 @@ export default class Wu {
       this.win.console = { log: () => {} };
       this.win.console.error = this.win.console.debug = this.win.console.info = this.win.console.log;
     }
+
+    let location = this.win.location || { hostname: '' };
+    let hostname = location.hostname.toLowerCase();
+
+    // init current site config
+    this.site = { hostname: hostname, domain: hostname.toLowerCase().replace('www.', ''), config: {} };
   }
 
   /**
