@@ -579,7 +579,19 @@ export default class Wu {
   jsonp(uri, callback) {
     let callbackVar = 'wucb' + (new Date()).getTime();
     
-    this.win[callbackVar] = callback;
+    this.win[callbackVar] = (svrRsp) => {
+      let rsp = svrRsp;
+
+      if (typeof (svrRsp) === 'string') {
+        if (svrRsp === 'null') {
+          rsp = null;
+        } else {
+          rsp = JSON.parse(svrRsp);
+        }
+      }
+
+      callback(rsp);
+    };
     uri = uri;
     uri += ((uri.indexOf('?') > 0) ? '&' : '?') + 'callback=' + callbackVar;
     this.loadScript(uri);
