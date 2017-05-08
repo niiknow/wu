@@ -87,10 +87,10 @@ function each(obj, iterator, context) {
       if (iterator.call(context, obj[i], i, obj) === breaker) return;
     }
   } else {
-    let keys = keys(obj);
+    let mykeys = keys(obj);
 
-    for (let j = 0, length2 = keys.length; j < length2; j++) {
-      if (iterator.call(context, obj[keys[j]], keys[j], obj) === breaker) return;
+    for (let j = 0, length2 = mykeys.length; j < length2; j++) {
+      if (iterator.call(context, obj[mykeys[j]], mykeys[j], obj) === breaker) return;
     }
   }
 };
