@@ -55,6 +55,29 @@ function detectIe() {
   return false;
 };
 
+function has(obj, key) {
+  return hasOwnProperty.call(obj, key);
+}
+
+function keys(obj) {
+  if (nativeKeys) {
+    return nativeKeys(obj);
+  }
+
+  if (obj !== Object(obj)) {
+    throw new TypeError('Invalid object');
+  }
+
+  let keys = [],
+    key;
+
+  for (key in obj) {
+    if (has(obj, key)) keys.push(key);
+  }
+
+  return keys;
+};
+
 function each(obj, iterator, context) {
   if (isNull(obj, null) === null) return;
   if (nativeForEach && obj.forEach === nativeForEach) {
@@ -64,7 +87,7 @@ function each(obj, iterator, context) {
       if (iterator.call(context, obj[i], i, obj) === breaker) return;
     }
   } else {
-    let keys = this.keys(obj);
+    let keys = keys(obj);
 
     for (let j = 0, length2 = keys.length; j < length2; j++) {
       if (iterator.call(context, obj[keys[j]], keys[j], obj) === breaker) return;
@@ -85,10 +108,12 @@ export default class Wu {
       isIOS: /iP(hone|od|ad)/gi.test(userAgent)
     };
 
+    this.has = has;
+    this.keys = keys;
     this.isNull = isNull;
     this.win = myRoot;
     this.doc = this.win.document || {};
-    this.each = this.forEach = each;
+    this.each = this.forEach = this.each = each;
     this.collect = this.map;
     this.any = this.some;
     this.getAttribute = this.getAttr;
@@ -505,40 +530,6 @@ export default class Wu {
     }
 
     return false;
-  }
-
-  /**
-   * helper method to determine if an object has a property
-   * @param  {object}  obj the object
-   * @param  {string}  key the property name
-   * @return {Boolean}
-   */
-  has(obj, key) {
-    return hasOwnProperty.call(obj, key);
-  }
-
-  /**
-   * get all object keys
-   * @param  {object} obj the object
-   * @return {array}      all object property names
-   */
-  keys(obj) {
-    if (nativeKeys) {
-      return nativeKeys(obj);
-    }
-
-    if (obj !== Object(obj)) {
-      throw new TypeError('Invalid object');
-    }
-
-    let keys = [],
-      key;
-
-    for (key in obj) {
-      if (this.has(obj, key)) keys.push(key);
-    }
-
-    return keys;
   }
 
   /**
