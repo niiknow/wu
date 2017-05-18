@@ -110,13 +110,14 @@ export default class Wu {
 
     this.has = has;
     this.keys = keys;
+    this.each = this.forEach = each;
+
     this.isNull = isNull;
     this.win = myRoot;
     this.doc = this.win.document || {};
-    this.each = this.forEach = this.each = each;
     this.collect = this.map;
     this.any = this.some;
-    this.getAttribute = this.getAttr;
+    this.attr = this.getAttribute = this.getAttr;
     this.setAttribute = this.setAttr;
     this.emitter = emitter;
     this.domify = domify;
@@ -304,9 +305,14 @@ export default class Wu {
    * helper method to get attribute on specific dom object
    * @param  {object} dom  element
    * @param  {string} attr attribute name
+   * @param  {object} value attribute value
    * @return {string}      attribute value
    */
-  getAttr(dom, attr) {
+  getAttr(dom, attr, val) {
+    if (arguments.length > 2) {
+      return this.setAttr(dom, attr, val);
+    }
+
     let el = dom[0] || dom;
 
     return (el.getAttribute) ? el.getAttribute(attr) : el[attr];
@@ -350,7 +356,7 @@ export default class Wu {
       el[attr] = value;
     };
 
-    return el;
+    return value;
   }
 
   /**
