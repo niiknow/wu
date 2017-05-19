@@ -290,7 +290,7 @@ export default class Wu {
    * @param  {function} callback    the closure function on result
    */
   geoByIP(jsonpUrl, callback) {
-    this.jsonp(jsonpUrl || '//freegeoip.net/json', callback);
+    this.jsonp(jsonpUrl || '//freegeoip.net/json/', callback);
   }
 
   /**
