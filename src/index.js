@@ -208,15 +208,15 @@ export default class Wu {
       return str;
     }
   }
-  
+
   /**
    * get distance between two points
-   * @param  {number} latitude1  
-   * @param  {number} longitude1 
-   * @param  {number} latitude2  
-   * @param  {number} longitude2 
-   * @param  {object} options    
-   * @return {number}            
+   * @param  {number} latitude1
+   * @param  {number} longitude1
+   * @param  {number} latitude2
+   * @param  {number} longitude2
+   * @param  {object} options
+   * @return {number}
    */
   geoDistance(latitude1, longitude1, latitude2, longitude2, options) {
     options = options || {};
@@ -245,8 +245,8 @@ export default class Wu {
 
   /**
    * sort with nearest geopoint, expect object with two properties: Latitude and Longitude
-   * @param  {array}    points     
-   * @param  {object}   origin point 
+   * @param  {array}    points
+   * @param  {object}   origin point
    * @param  {function} callback    the closure function on result
    */
   geoOrderByOrigin(points, origin, callback) {
@@ -267,7 +267,7 @@ export default class Wu {
 
   /**
    * sort with nearest geopoint, expect object with two properties: Latitude and Longitude
-   * @param  {array}    points     
+   * @param  {array}    points
    * @params {string}   jsonpUrl    the jsonp url without any query string
    */
   geoOrderByIP(points, jsonpUrl, callback) {
@@ -300,7 +300,7 @@ export default class Wu {
   getAjaxObject() {
     return ('XMLHttpRequest' in window) ? new XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP');
   }
-  
+
   /**
    * helper method to get attribute on specific dom object
    * @param  {object} dom  element
@@ -564,7 +564,7 @@ export default class Wu {
       elx = elx || (self.doc.head || self.doc.getElementsByTagName('head')[0]).lastChild;
       elx.parentNode.insertBefore(el, elx);
     }
-    
+
     return self;
   }
 
@@ -575,7 +575,7 @@ export default class Wu {
    */
   jsonp(uri, callback) {
     let callbackVar = 'wucb' + (new Date()).getTime();
-    
+
     this.win[callbackVar] = (svrRsp) => {
       let rsp = svrRsp;
 
@@ -896,7 +896,7 @@ export default class Wu {
     return (str.trim) ? str.trim() : str.replace(/^\s*|\s*$/g, '');
   }
 
-/*eslint-disable */
+  /* eslint-disable */
 
   /**
    * Taken straight from jed's gist: https://gist.github.com/982883
@@ -908,7 +908,7 @@ export default class Wu {
     return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,this.uuid);
   }
 
-/*eslint-enable */
+  /* eslint-enable */
 
   /**
    * make an xhr request
