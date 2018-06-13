@@ -30,7 +30,7 @@ const config = {
   output: {
     path: __dirname + '/lib',
     filename: outputFile,
-    library: 'Wu',
+    library: libraryName,
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
@@ -45,6 +45,10 @@ const config = {
         test: /(\.jsx|\.js)$/,
         loader: "eslint-loader",
         exclude: /node_modules/
+      },
+      {
+        test: /(\.html|\.css)$/,
+        use: 'raw-loader'
       }
     ]
   },
