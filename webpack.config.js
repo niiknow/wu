@@ -6,7 +6,7 @@ const path = require('path');
 const env  = require('yargs').argv.env; // use --env with webpack 2
 const pkg = require('./package.json');
 
-let libraryName = 'Wu';
+let libraryName = pkg.name;
 let plugins = [], outputFile;
 
 let banner = [
@@ -18,27 +18,19 @@ let banner = [
 plugins.push( new webpack.BannerPlugin(banner) );
 
 if (env === 'build') {
-  plugins.push(new UglifyJsPlugin({ minimize: true }));
+  plugins.push(new UglifyJsPlugin({ minimize: true, sourceMap: true }));
   outputFile = libraryName + '.min.js';
 } else {
   outputFile = libraryName + '.js';
 }
 
-
-/*
-plugins.push( new webpack.ProvidePlugin({
-    '$global': ''
-  })
-);
-*/
-
 const config = {
-  entry: __dirname + '/src/index.js',
+  entry: [__dirname + '/src/index.js'],
   devtool: 'source-map',
   output: {
     path: __dirname + '/lib',
     filename: outputFile,
-    library: libraryName,
+    library: 'Wu',
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
@@ -57,12 +49,8 @@ const config = {
     ]
   },
   resolve: {
-    modules: [path.resolve('./src')],
+    modules: [path.resolve('./src'), 'node_modules'],
     extensions: ['.json', '.js']
-/*    alias: {
-      '$inc': path.resolve(__dirname, './lib/index.js')
-    }
-*/
   },
   plugins: plugins,
   target: 'web'
