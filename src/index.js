@@ -255,7 +255,7 @@ export default class Wu {
 
     each(points, (point) => {
       let d = that.geoDistance(origin.Latitude, origin.Longitude, point.Latitude, point.Longitude, { unit: 'mile' });
-      let newPoint = { point: point, distance: parseFloat(that.isNull(d, 0)).toFixed(2) };
+      let newPoint = { point: point, distance: parseFloat(that.isNull(d, 0)) };
 
       result.results.push(newPoint);
     });
