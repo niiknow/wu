@@ -1,8 +1,8 @@
-const domify   = require('domify');
-const emitter  = require('component-emitter');
+const domify = require('domify');
+const emitter = require('component-emitter');
 const debounce = require('debounce');
-const cookie   = require('component-cookie');
-const debug    = require('debug');
+const cookie = require('component-cookie');
+const debug = require('debug');
 
 let myRoot = { navigator: { userAgent: '' }, location: { protocol: 'file', hostname: '' } };
 
@@ -87,7 +87,7 @@ function each(obj, iterator, context) {
       if (iterator.call(context, obj[i], i, obj) === breaker) return;
     }
   } else {
-    let mykeys = keys(obj);
+    const mykeys = keys(obj);
 
     for (let j = 0, length2 = mykeys.length; j < length2; j++) {
       if (iterator.call(context, obj[mykeys[j]], mykeys[j], obj) === breaker) return;
@@ -100,41 +100,42 @@ function each(obj, iterator, context) {
  */
 class Wu {
   constructor() {
-    this._name = 'Wu';
-    this.browser = {
+    const that = this;
+
+    that._name = 'Wu';
+    that.browser = {
       isIE: detectIe(),
       isMobile: /iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/gi.test(userAgent),
       isAndroid: /(android)/gi.test(userAgent),
       isIOS: /iP(hone|od|ad)/gi.test(userAgent)
     };
 
-    this.has = has;
-    this.keys = keys;
-    this.each = this.forEach = each;
-
-    this.isNull = isNull;
-    this.win = myRoot;
-    this.doc = this.win.document || {};
-    this.collect = this.map;
-    this.any = this.some;
-    this.attr = this.getAttribute = this.getAttr;
-    this.setAttribute = this.setAttr;
-    this.emitter = emitter;
-    this.domify = domify;
-    this.debounce = debounce;
-    this.cookie = cookie;
-    this.debug = debug;
+    that.has = has;
+    that.keys = keys;
+    that.each = that.forEach = each;
+    that.isNull = isNull;
+    that.win = myRoot;
+    that.doc = that.win.document || {};
+    that.collect = that.map;
+    that.any = that.some;
+    that.attr = that.getAttribute = that.getAttr;
+    that.setAttribute = that.setAttr;
+    that.emitter = emitter;
+    that.domify = domify;
+    that.debounce = debounce;
+    that.cookie = cookie;
+    that.debug = debug;
 
     // dummy up console log for IE
-    if (typeof this.win.console === 'undefined') {
-      this.win.console = { log: () => {} };
-      this.win.console.error = this.win.console.debug = this.win.console.info = this.win.console.log;
+    if (typeof that.win.console === 'undefined') {
+      that.win.console = { log: () => {} };
+      that.win.console.error = that.win.console.debug = that.win.console.info = that.win.console.log;
     }
 
-    let hostname = this.trim(this.win.location.hostname.toLowerCase());
+    const hostname = that.trim(that.win.location.hostname.toLowerCase());
 
     // init current site config
-    this.site = { hostname: hostname, domain: hostname.replace('www.', ''), config: {} };
+    that.site = { hostname: hostname, domain: hostname.replace('www.', ''), config: {} };
   }
 
   /**
@@ -161,6 +162,7 @@ class Wu {
     } else {
       obj[evtName] = func;
     }
+
     return this;
   }
 
@@ -180,6 +182,7 @@ class Wu {
     } else {
       obj[evtName] = null;
     }
+
     return this;
   }
 
@@ -225,16 +228,16 @@ class Wu {
       return num * Math.PI / 180;
     }
 
-    let start = { latitude: latitude1, longitude: longitude1 };
-    let end = { latitude: latitude2, longitude: longitude2 };
-    let radii = { km: 6371, mile: 3960, meter: 6371000, nmi: 3440};
-    let R = options.unit in radii ? radii[options.unit] : radii.km;
-    let dLat = toRad(end.latitude - start.latitude);
-    let dLon = toRad(end.longitude - start.longitude);
-    let lat1 = toRad(start.latitude);
-    let lat2 = toRad(end.latitude) ;
-    let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const start = { latitude: latitude1, longitude: longitude1 };
+    const end = { latitude: latitude2, longitude: longitude2 };
+    const radii = { km: 6371, mile: 3960, meter: 6371000, nmi: 3440};
+    const R = options.unit in radii ? radii[options.unit] : radii.km;
+    const dLat = toRad(end.latitude - start.latitude);
+    const dLon = toRad(end.longitude - start.longitude);
+    const lat1 = toRad(start.latitude);
+    const lat2 = toRad(end.latitude) ;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     if (options.threshold) {
       return options.threshold > (R * c);
@@ -250,12 +253,12 @@ class Wu {
    * @param  {function} callback    the closure function on result
    */
   geoOrderByOrigin(points, origin, callback) {
-    let that = this;
-    let result = { origin: origin, results: [] };
+    const that = this;
+    const result = { origin: origin, results: [] };
 
     each(points, (point) => {
-      let d = that.geoDistance(origin.Latitude, origin.Longitude, point.Latitude, point.Longitude, { unit: 'mile' });
-      let newPoint = { point: point, distance: parseFloat(that.isNull(d, 0)) };
+      const d = that.geoDistance(origin.Latitude, origin.Longitude, point.Latitude, point.Longitude, { unit: 'mile' });
+      const newPoint = { point: point, distance: parseFloat(that.isNull(d, 0)) };
 
       result.results.push(newPoint);
     });
@@ -271,9 +274,9 @@ class Wu {
    * @params {string}   jsonpUrl    the jsonp url without any query string
    */
   geoOrderByIP(points, jsonpUrl, callback) {
-    let that = this;
+    const that = this;
 
-    this.geoByIP(jsonpUrl, (rst) => {
+    that.geoByIP(jsonpUrl, (rst) => {
       if (rst.latitude) {
         rst.Latitude = rst.latitude;
         rst.Longitude = rst.longitude;
@@ -281,7 +284,7 @@ class Wu {
       }
     });
 
-    return this;
+    return that;
   }
 
   /**
@@ -325,8 +328,8 @@ class Wu {
    * @return {string}       result object
    */
   getAttrs(dom, attrs) {
-    let rst = {};
-    let that = this;
+    const rst = {};
+    const that = this;
 
     each(['', 'data-'], (v, k) => {
       each(attrs || [], (v2, k2) => {
@@ -348,7 +351,7 @@ class Wu {
    * @param {object} value attribute value
    */
   setAttr(dom, attr, value) {
-    let el = dom[0] || dom;
+    const el = dom[0] || dom;
 
     if (el.setAttribute) {
       el.setAttribute(attr, value);
@@ -365,8 +368,8 @@ class Wu {
    * @param {object} attrs key value pair object
    */
   setAttrs(dom, attrs) {
-    let el = dom[0] || dom;
-    let that = this;
+    const el = dom[0] || dom;
+    const that = this;
 
     each(attrs || [], (v, k) => {
       that.setAttr(el, k, v);
@@ -395,7 +398,7 @@ class Wu {
    * @return {object} the iframe
    */
   createiFrame(id, className) {
-    let iframe = this.doc.createElement('iframe');
+    const iframe = this.doc.createElement('iframe');
 
     if (id) iframe.id = id;
     if (className) iframe.className = className;
@@ -419,6 +422,7 @@ class Wu {
    */
   del(obj, key) {
     obj[key] = undefined;
+
     try {
       delete obj[key];
     } catch (e) {
@@ -547,25 +551,25 @@ class Wu {
    * @return {Object}
    */
   injectStyle(id, css) {
-    let el, elx, self = this;
+    let el, elx, that = this;
 
-    el = self.doc.getElementById(id);
+    el = that.doc.getElementById(id);
 
     if (!el) {
-      el = self.doc.createElement('style');
+      el = that.doc.createElement('style');
       el.id = id;
       el.type = 'text/css';
       if (el.styleSheet) {
         el.styleSheet.cssText = css;
       } else {
-        el.appendChild(self.doc.createTextNode(css));
+        el.appendChild(that.doc.createTextNode(css));
       }
-      elx = self.doc.getElementsByTagName('link')[0];
-      elx = elx || (self.doc.head || self.doc.getElementsByTagName('head')[0]).lastChild;
+      elx = that.doc.getElementsByTagName('link')[0];
+      elx = elx || (that.doc.head || that.doc.getElementsByTagName('head')[0]).lastChild;
       elx.parentNode.insertBefore(el, elx);
     }
 
-    return self;
+    return that;
   }
 
   /**
@@ -756,8 +760,9 @@ class Wu {
    */
   queryParseString(qstr) {
     qstr = (qstr || '').replace('?', '').replace('#', '');
-    let pattern = /(\w+)\[(\d+)\]/;
-    let decode = this.decode,
+
+    const pattern = /(\w+)\[(\d+)\]/;
+    const decode = this.decode,
       obj = {},
       a = qstr.split('&');
 
@@ -801,7 +806,7 @@ class Wu {
    * @return {object}     the request object
    */
   request(opts, callback, errback) {
-    let that = this;
+    const that = this;
 
     opts.headers = opts.headers || {};
     if (['HEAD', 'GET', 'DELETE'].indexOf(opts.method) > -1) {
@@ -930,10 +935,14 @@ class Wu {
 
     if (options.withCredentials) {
       req.withCredentials = true;
+
+      /* eslint-disable */
       if (typeof XDomainRequest !== 'undefined') {
         // XDomainRequest for IE.
         req = new XDomainRequest();
       }
+      /* eslint-enable */
+
     }
 
     // if there are no options, it failed

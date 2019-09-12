@@ -2,7 +2,7 @@
  * Wu
  * web utils
 
- * @version v0.4.0
+ * @version v0.4.1
  * @author Tom Noogen
  * @homepage https://github.com/niiknow/wu
  * @repository https://github.com/niiknow/wu.git
@@ -2217,39 +2217,40 @@ function () {
   function Wu() {
     _classCallCheck(this, Wu);
 
-    this._name = 'Wu';
-    this.browser = {
+    var that = this;
+    that._name = 'Wu';
+    that.browser = {
       isIE: detectIe(),
       isMobile: /iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/gi.test(userAgent),
       isAndroid: /(android)/gi.test(userAgent),
       isIOS: /iP(hone|od|ad)/gi.test(userAgent)
     };
-    this.has = has;
-    this.keys = keys;
-    this.each = this.forEach = each;
-    this.isNull = isNull;
-    this.win = myRoot;
-    this.doc = this.win.document || {};
-    this.collect = this.map;
-    this.any = this.some;
-    this.attr = this.getAttribute = this.getAttr;
-    this.setAttribute = this.setAttr;
-    this.emitter = emitter;
-    this.domify = domify;
-    this.debounce = debounce;
-    this.cookie = cookie;
-    this.debug = debug; // dummy up console log for IE
+    that.has = has;
+    that.keys = keys;
+    that.each = that.forEach = each;
+    that.isNull = isNull;
+    that.win = myRoot;
+    that.doc = that.win.document || {};
+    that.collect = that.map;
+    that.any = that.some;
+    that.attr = that.getAttribute = that.getAttr;
+    that.setAttribute = that.setAttr;
+    that.emitter = emitter;
+    that.domify = domify;
+    that.debounce = debounce;
+    that.cookie = cookie;
+    that.debug = debug; // dummy up console log for IE
 
-    if (typeof this.win.console === 'undefined') {
-      this.win.console = {
+    if (typeof that.win.console === 'undefined') {
+      that.win.console = {
         log: function log() {}
       };
-      this.win.console.error = this.win.console.debug = this.win.console.info = this.win.console.log;
+      that.win.console.error = that.win.console.debug = that.win.console.info = that.win.console.log;
     }
 
-    var hostname = this.trim(this.win.location.hostname.toLowerCase()); // init current site config
+    var hostname = that.trim(that.win.location.hostname.toLowerCase()); // init current site config
 
-    this.site = {
+    that.site = {
       hostname: hostname,
       domain: hostname.replace('www.', ''),
       config: {}
@@ -2421,14 +2422,14 @@ function () {
     key: "geoOrderByIP",
     value: function geoOrderByIP(points, jsonpUrl, callback) {
       var that = this;
-      this.geoByIP(jsonpUrl, function (rst) {
+      that.geoByIP(jsonpUrl, function (rst) {
         if (rst.latitude) {
           rst.Latitude = rst.latitude;
           rst.Longitude = rst.longitude;
           that.geoOrderByOrigin(points, rst, callback);
         }
       });
-      return this;
+      return that;
     }
     /**
      * locate geo by IP
@@ -2709,26 +2710,26 @@ function () {
     value: function injectStyle(id, css) {
       var el,
           elx,
-          self = this;
-      el = self.doc.getElementById(id);
+          that = this;
+      el = that.doc.getElementById(id);
 
       if (!el) {
-        el = self.doc.createElement('style');
+        el = that.doc.createElement('style');
         el.id = id;
         el.type = 'text/css';
 
         if (el.styleSheet) {
           el.styleSheet.cssText = css;
         } else {
-          el.appendChild(self.doc.createTextNode(css));
+          el.appendChild(that.doc.createTextNode(css));
         }
 
-        elx = self.doc.getElementsByTagName('link')[0];
-        elx = elx || (self.doc.head || self.doc.getElementsByTagName('head')[0]).lastChild;
+        elx = that.doc.getElementsByTagName('link')[0];
+        elx = elx || (that.doc.head || that.doc.getElementsByTagName('head')[0]).lastChild;
         elx.parentNode.insertBefore(el, elx);
       }
 
-      return self;
+      return that;
     }
     /**
      * jsonp load
@@ -3119,11 +3120,14 @@ function () {
 
       if (options.withCredentials) {
         req.withCredentials = true;
+        /* eslint-disable */
 
         if (typeof XDomainRequest !== 'undefined') {
           // XDomainRequest for IE.
           req = new XDomainRequest();
         }
+        /* eslint-enable */
+
       } // if there are no options, it failed
 
 
