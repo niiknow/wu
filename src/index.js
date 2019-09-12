@@ -1,10 +1,10 @@
-import domify from 'domify';
-import emitter from 'component-emitter';
-import debounce from 'debounce';
-import cookie from 'component-cookie';
-import debug from 'debug';
+const domify   = require('domify');
+const emitter  = require('component-emitter');
+const debounce = require('debounce');
+const cookie   = require('component-cookie');
+const debug    = require('debug');
 
-var myRoot = { navigator: { userAgent: '' }, location: { protocol: 'file', hostname: '' } };
+let myRoot = { navigator: { userAgent: '' }, location: { protocol: 'file', hostname: '' } };
 
 // Establish the object that gets returned to break out of a loop iteration.
 const breaker = {};
@@ -29,11 +29,11 @@ function isNull(obj, defaultValue) {
   return (typeof (obj) === 'undefined' || obj === null || obj === 'null') ? defaultValue : obj;
 };
 
-const userAgent = myRoot.navigator.userAgent;
-
 if (typeof (window) !== 'undefined') {
   myRoot = window;
 }
+
+const userAgent = myRoot.navigator.userAgent || '';
 
 function detectIe() {
   const ua = userAgent;
@@ -98,7 +98,7 @@ function each(obj, iterator, context) {
 /**
  * Wu is short for Web Utilities
  */
-export default class Wu {
+class Wu {
   constructor() {
     this._name = 'Wu';
     this.browser = {
@@ -989,4 +989,6 @@ export default class Wu {
 
     return req;
   }
-}
+};
+
+module.exports = Wu;

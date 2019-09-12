@@ -30,3 +30,5 @@ node_modules
 .idea
 .vscode
 .DS_Store
+.ds_store
+.nyc_output
