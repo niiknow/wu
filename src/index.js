@@ -755,47 +755,58 @@ class Wu {
 
   /**
    * helper method to parse querystring to object
-   * @param  {string} qstr the querystring
-   * @return {object}      result
+   *
+   * @param  String qstr the querystring
+   * @return Object      result
    */
   queryParseString(qstr) {
-    qstr = (qstr || '').replace('?', '').replace('#', '');
+    qstr = (qstr || '').replace('?', '').replace('#', '')
 
-    const pattern = /(\w+)\[(\d+)\]/;
+    const pattern = /(\w+)\[(\d+)\]/
     const decode = this.decode,
       obj = {},
-      a = qstr.split('&');
+      a = qstr.split('&')
 
     for (let i = 0; i < a.length; i++) {
       let parts = a[i].split('='),
         key = decode(parts[0]),
-        m = pattern.exec(key);
+        m = pattern.exec(key)
 
       if (m) {
-        obj[m[1]] = obj[m[1]] || [];
-        obj[m[1]][m[2]] = decode(parts[1]);
-        continue;
+        obj[m[1]] = obj[m[1]] || []
+        obj[m[1]][m[2]] = decode(parts[1])
+        continue
       }
 
-      obj[parts[0]] = decode(parts[1] || '');
+      obj[parts[0]] = decode(parts[1] || '')
     }
 
-    return obj;
+    return obj
   }
 
   /**
    * reverse object to query string
-   * @param  {object} obj the object
-   * @return {string}     the query string
+   *
+   * @param  Object obj the object
+   * @return String     the query string
    */
-  queryStringify(obj) {
-    let str = '',
-      encode = this.encode;
+  queryStringify(obj, prefix) {
+    const that   = this
+    const encode = that.encode
 
-    each(obj, (v, k) => {
-      str += `&${k}=${encode(v)}`;
-    });
-    return str.replace('&', '');
+    let str = [], p
+
+    for (p in obj) {
+      if (obj.hasOwnProperty(p)) {
+        let k = prefix ? prefix + '[' + p + ']' : p, v = obj[p]
+
+        str.push((v !== null && typeof v === 'object') ?
+          that.queryStringify(v, k) :
+          encode(k) + '=' + encode(v))
+      }
+    }
+
+    return str.join('&')
   }
 
   /**

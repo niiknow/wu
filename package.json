@@ -1,6 +1,6 @@
 {
   "name": "Wu",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "web utils",
   "main": "lib/wu.min.js",
   "scripts": {
@@ -18,12 +18,12 @@
     "jquery": ">=1.9"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.0",
-    "@babel/preset-env": "^7.6.0",
-    "ava": "^2.3.0",
-    "babel-eslint": "^10.0.3",
-    "browser-env": "^3.2.6",
-    "browser-sync": "^2.26.7",
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "ava": "^2.4.0",
+    "babel-eslint": "^10.1.0",
+    "browser-env": "^3.3.0",
+    "browser-sync": "^2.26.10",
     "browser-sync-webpack-plugin": "^2.0.1",
     "component-cookie": "github:component/cookie",
     "component-emitter": "github:component/emitter",
@@ -36,7 +36,7 @@
     "laravel-mix-banner": "^0.1.4",
     "nyc": "^14.1.1",
     "smart-banner-webpack-plugin": "^3.0.1",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.11"
   },
   "repository": {
     "type": "git",

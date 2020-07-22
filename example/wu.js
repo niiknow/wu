@@ -2,7 +2,7 @@
  * Wu
  * web utils
 
- * @version v0.4.1
+ * @version v0.4.2
  * @author Tom Noogen
  * @homepage https://github.com/niiknow/wu
  * @repository https://github.com/niiknow/wu.git
@@ -2088,6 +2088,8 @@ process.umask = function() { return 0; };
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -2211,9 +2213,7 @@ function each(obj, iterator, context) {
  * Wu is short for Web Utilities
  */
 
-var Wu =
-/*#__PURE__*/
-function () {
+var Wu = /*#__PURE__*/function () {
   function Wu() {
     _classCallCheck(this, Wu);
 
@@ -2925,8 +2925,9 @@ function () {
     }
     /**
      * helper method to parse querystring to object
-     * @param  {string} qstr the querystring
-     * @return {object}      result
+     *
+     * @param  String qstr the querystring
+     * @return Object      result
      */
 
   }, {
@@ -2956,19 +2957,28 @@ function () {
     }
     /**
      * reverse object to query string
-     * @param  {object} obj the object
-     * @return {string}     the query string
+     *
+     * @param  Object obj the object
+     * @return String     the query string
      */
 
   }, {
     key: "queryStringify",
-    value: function queryStringify(obj) {
-      var str = '',
-          encode = this.encode;
-      each(obj, function (v, k) {
-        str += "&".concat(k, "=").concat(encode(v));
-      });
-      return str.replace('&', '');
+    value: function queryStringify(obj, prefix) {
+      var that = this;
+      var encode = that.encode;
+      var str = [],
+          p;
+
+      for (p in obj) {
+        if (obj.hasOwnProperty(p)) {
+          var k = prefix ? prefix + '[' + p + ']' : p,
+              v = obj[p];
+          str.push(v !== null && _typeof(v) === 'object' ? that.queryStringify(v, k) : encode(k) + '=' + encode(v));
+        }
+      }
+
+      return str.join('&');
     }
     /**
      * make http request
@@ -3198,7 +3208,7 @@ module.exports = Wu;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/tomnoogen/Desktop/work/niiknow/wu/src/index.js */"./src/index.js");
+module.exports = __webpack_require__(/*! /Users/techsupport/Desktop/work/niiknow/wu/src/index.js */"./src/index.js");
 
 
 /***/ })
