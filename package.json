@@ -23,7 +23,7 @@
     "ava": "^2.4.0",
     "babel-eslint": "^10.1.0",
     "browser-env": "^3.3.0",
-    "browser-sync": "^2.26.10",
+    "browser-sync": "^2.27.10",
     "browser-sync-webpack-plugin": "^2.0.1",
     "component-cookie": "github:component/cookie",
     "component-emitter": "github:component/emitter",
